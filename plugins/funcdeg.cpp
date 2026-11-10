@@ -18,7 +18,7 @@ double power(const double* args) {
 }
 
 const CalcPluginInfo kInfo = {
-    CALC_PLUGIN_API_VERSION,
+    kCalcPluginApiVersion,
     "^",
     CALC_PLUGIN_BINARY_OPERATOR,
     2,   // оператор всегда бинарный

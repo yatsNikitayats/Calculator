@@ -97,7 +97,6 @@ void OperationRegistry::printSummary(std::ostream& out) const {
 }
 
 void registerBuiltins(OperationRegistry& registry) {
-    using namespace precedence;
     registry.addOperator({"+", kAdditive, false, [](double a, double b) { return a + b; }, "builtin"});
     registry.addOperator({"-", kAdditive, false, [](double a, double b) { return a - b; }, "builtin"});
     registry.addOperator({"*", kMultiplicative, false, [](double a, double b) { return a * b; }, "builtin"});

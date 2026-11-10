@@ -8,6 +8,7 @@
 #pragma once
 
 #include <filesystem>
+#include <memory>
 #include <string>
 
 class DynamicLibrary {
@@ -25,12 +26,13 @@ public:
     void* symbol(const char* name) const;
 
 private:
-    void release() noexcept;
+    struct Unloader {
+        void operator()(void* handle) const noexcept;
+    };
 
-    void* handle_ = nullptr;
+    std::unique_ptr<void, Unloader> handle_;
 };
 
-namespace platform {
 
 // Расширение динамических библиотек: ".dll".
 const char* libraryExtension();
@@ -38,4 +40,3 @@ const char* libraryExtension();
 // Папка, в которой лежит исполняемый файл (calc.exe).
 std::filesystem::path executableDir();
 
-}  // namespace platform

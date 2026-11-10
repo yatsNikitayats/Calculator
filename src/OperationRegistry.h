@@ -51,10 +51,8 @@ private:
 
 // Приоритеты встроенных операций. Плагины берут числа из этой же шкалы,
 // например ^ = 40 — выше умножения и унарного минуса.
-namespace precedence {
 constexpr int kAdditive = 10;        // + -
 constexpr int kMultiplicative = 20;  // * /
 constexpr int kUnary = 30;           // -x, +x
-}  // namespace precedence
 
 void registerBuiltins(OperationRegistry& registry);

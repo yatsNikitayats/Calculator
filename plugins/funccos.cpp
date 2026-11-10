@@ -6,13 +6,14 @@
 namespace {
 
 double cosDegrees(const double* args) {
-    const double pi = std::acos(-1.0);
+    constexpr double pi = 3.14159265358979323846;
     const double value = std::cos(args[0] * pi / 180.0);
-    return std::fabs(value) < 1e-12 ? 0.0 : value;
+    constexpr double kZeroTolerance = 1e-12;
+    return std::fabs(value) < kZeroTolerance ? 0.0 : value;
 }
 
 const CalcPluginInfo kInfo = {
-    CALC_PLUGIN_API_VERSION, "cos", CALC_PLUGIN_FUNCTION, 1, 0, 0,
+    kCalcPluginApiVersion, "cos", CALC_PLUGIN_FUNCTION, 1, 0, 0,
     &calc_plugin::safeCall<cosDegrees>,
 };
 

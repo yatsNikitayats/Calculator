@@ -77,7 +77,7 @@ double Parser::parseUnary() {
     if (t.type == TokenType::Operator && (t.text == "-" || t.text == "+")) {
         const bool negate = (t.text == "-");
         advance();
-        const double value = parseExpression(precedence::kUnary);
+        const double value = parseExpression(kUnary);
         return negate ? -value : value;
     }
     return parsePrimary();

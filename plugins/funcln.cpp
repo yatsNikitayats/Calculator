@@ -12,7 +12,7 @@ double naturalLog(const double* args) {
 }
 
 const CalcPluginInfo kInfo = {
-    CALC_PLUGIN_API_VERSION, "ln", CALC_PLUGIN_FUNCTION, 1, 0, 0,
+    kCalcPluginApiVersion, "ln", CALC_PLUGIN_FUNCTION, 1, 0, 0,
     &calc_plugin::safeCall<naturalLog>,
 };
 

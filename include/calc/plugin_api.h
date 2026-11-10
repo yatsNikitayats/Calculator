@@ -6,10 +6,10 @@
 
 #include <exception>
 
-#define CALC_PLUGIN_API_VERSION 1
+inline constexpr int kCalcPluginApiVersion = 1;
 
 // Имя функции, которую программа ищет в каждой dll. Имя файла значения не имеет.
-#define CALC_PLUGIN_ENTRY_NAME "calc_get_plugin_info"
+inline constexpr const char* kCalcPluginEntryName = "calc_get_plugin_info";
 
 // extern "C" — без этого имя функции в dll изменится, и GetProcAddress её не найдёт.
 // __declspec(dllexport) — чтобы функция была видна снаружи dll.
@@ -28,7 +28,7 @@ typedef int (*CalcPluginFn)(const double* args, int argc, double* result,
                             char* errorBuf, int errorBufSize);
 
 struct CalcPluginInfo {
-    int apiVersion;        // должен быть равен CALC_PLUGIN_API_VERSION
+    int apiVersion;        // должен быть равен kCalcPluginApiVersion
     const char* name;      // "sin", "ln", "^" ...
     int kind;              // CalcPluginKind
     int arity;             // число аргументов (для оператора всегда 2)

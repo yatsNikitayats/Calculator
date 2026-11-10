@@ -42,7 +42,7 @@ int main() {
         OperationRegistry registry;
         registerBuiltins(registry);
 
-        const auto pluginDir = platform::executableDir() / "plugins";
+        const auto pluginDir = executableDir() / "plugins";
         const PluginLoadReport report = loadPlugins(pluginDir, registry);
         for (const auto& line : report.loaded) std::cout << "[plugin] loaded " << line << '\n';
         for (const auto& line : report.errors) std::cerr << "[plugin] warning: " << line << '\n';

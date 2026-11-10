@@ -18,34 +18,24 @@ DynamicLibrary::DynamicLibrary(const std::filesystem::path& path) {
     if (h == nullptr)
         throw PluginError("cannot load library (WinAPI error " + std::to_string(::GetLastError()) +
                           ", file is not a valid DLL or has the wrong bitness)");
-    handle_ = reinterpret_cast<void*>(h);
+    handle_.reset(reinterpret_cast<void*>(h));
 }
 
-DynamicLibrary::~DynamicLibrary() { release(); }
-
-DynamicLibrary::DynamicLibrary(DynamicLibrary&& other) noexcept
-    : handle_(std::exchange(other.handle_, nullptr)) {}
-
-DynamicLibrary& DynamicLibrary::operator=(DynamicLibrary&& other) noexcept {
-    if (this != &other) {
-        release();
-        handle_ = std::exchange(other.handle_, nullptr);
-    }
-    return *this;
+void DynamicLibrary::Unloader::operator()(void* handle) const noexcept {
+    ::FreeLibrary(static_cast<HMODULE>(handle));
 }
+
+DynamicLibrary::~DynamicLibrary() = default;
+
+DynamicLibrary::DynamicLibrary(DynamicLibrary&& other) noexcept = default;
+
+DynamicLibrary& DynamicLibrary::operator=(DynamicLibrary&& other) noexcept = default;
 
 void* DynamicLibrary::symbol(const char* name) const {
-    if (handle_ == nullptr) return nullptr;
-    return reinterpret_cast<void*>(::GetProcAddress(static_cast<HMODULE>(handle_), name));
+    if (!handle_) return nullptr;
+    return reinterpret_cast<void*>(::GetProcAddress(static_cast<HMODULE>(handle_.get()), name));
 }
 
-void DynamicLibrary::release() noexcept {
-    if (handle_ == nullptr) return;
-    ::FreeLibrary(static_cast<HMODULE>(handle_));
-    handle_ = nullptr;
-}
-
-namespace platform {
 
 const char* libraryExtension() { return ".dll"; }
 
@@ -58,4 +48,3 @@ std::filesystem::path executableDir() {
     return std::filesystem::current_path(ec);  // если не получилось, берём текущую папку
 }
 
-}  // namespace platform

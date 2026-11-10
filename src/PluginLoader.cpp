@@ -16,14 +16,14 @@ bool hasLibraryExtension(const fs::path& file) {
     std::string ext = file.extension().string();
     std::transform(ext.begin(), ext.end(), ext.begin(),
                    [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
-    return ext == platform::libraryExtension();
+    return ext == libraryExtension();
 }
 
 // Берём описание функции из dll и проверяем, что оно в порядке.
 const CalcPluginInfo& readPluginInfo(const DynamicLibrary& lib) {
-    auto getInfo = reinterpret_cast<CalcGetPluginInfoFn>(lib.symbol(CALC_PLUGIN_ENTRY_NAME));
+    auto getInfo = reinterpret_cast<CalcGetPluginInfoFn>(lib.symbol(kCalcPluginEntryName));
     if (getInfo == nullptr)
-        throw PluginError(std::string("entry point '") + CALC_PLUGIN_ENTRY_NAME + "' not found");
+        throw PluginError(std::string("entry point '") + kCalcPluginEntryName + "' not found");
 
     const CalcPluginInfo* info = nullptr;
     try {
@@ -33,7 +33,7 @@ const CalcPluginInfo& readPluginInfo(const DynamicLibrary& lib) {
     }
 
     if (info == nullptr) throw PluginError("entry point returned null");
-    if (info->apiVersion != CALC_PLUGIN_API_VERSION)
+    if (info->apiVersion != kCalcPluginApiVersion)
         throw PluginError("unsupported plugin API version " + std::to_string(info->apiVersion));
     if (info->name == nullptr) throw PluginError("plugin has no name");
     if (info->function == nullptr) throw PluginError("plugin has no function pointer");
@@ -126,7 +126,7 @@ PluginLoadReport loadPlugins(const fs::path& dir, OperationRegistry& registry) {
     std::sort(files.begin(), files.end());  // чтобы порядок загрузки был одинаковым при каждом запуске
 
     if (files.empty()) {
-        report.errors.push_back(std::string("no plugins (*") + platform::libraryExtension() +
+        report.errors.push_back(std::string("no plugins (*") + libraryExtension() +
                                 ") found in " + dir.string());
         return report;
     }

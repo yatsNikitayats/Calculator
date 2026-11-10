@@ -21,7 +21,7 @@ bool hasLibraryExtension(const fs::path& file) {
 
 // Берём описание функции из dll и проверяем, что оно в порядке.
 const CalcPluginInfo& readPluginInfo(const DynamicLibrary& lib) {
-    auto getInfo = reinterpret_cast<CalcGetPluginInfoFn>(lib.symbol(kCalcPluginEntryName));
+    auto getInfo = lib.symbol<CalcGetPluginInfoFn>(kCalcPluginEntryName);
     if (getInfo == nullptr)
         throw PluginError(std::string("entry point '") + kCalcPluginEntryName + "' not found");
 

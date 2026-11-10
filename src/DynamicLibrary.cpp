@@ -31,7 +31,7 @@ DynamicLibrary::DynamicLibrary(DynamicLibrary&& other) noexcept = default;
 
 DynamicLibrary& DynamicLibrary::operator=(DynamicLibrary&& other) noexcept = default;
 
-void* DynamicLibrary::symbol(const char* name) const {
+void* DynamicLibrary::rawSymbol(const char* name) const {
     if (!handle_) return nullptr;
     return reinterpret_cast<void*>(::GetProcAddress(static_cast<HMODULE>(handle_.get()), name));
 }

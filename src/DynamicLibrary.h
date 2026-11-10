@@ -10,6 +10,7 @@
 #include <filesystem>
 #include <memory>
 #include <string>
+#include <type_traits>
 
 class DynamicLibrary {
 public:
@@ -23,9 +24,17 @@ public:
     DynamicLibrary& operator=(DynamicLibrary&& other) noexcept;
 
     // Адрес функции из dll по имени, или nullptr, если такой нет.
-    void* symbol(const char* name) const;
+    // Fn — тип указателя на функцию; неверный тип ловится на этапе компиляции.
+    template <typename Fn>
+    Fn symbol(const char* name) const {
+        static_assert(std::is_pointer_v<Fn> && std::is_function_v<std::remove_pointer_t<Fn>>,
+                      "symbol<Fn>: Fn должен быть указателем на функцию");
+        return reinterpret_cast<Fn>(rawSymbol(name));
+    }
 
 private:
+    void* rawSymbol(const char* name) const;
+
     struct Unloader {
         void operator()(void* handle) const noexcept;
     };
